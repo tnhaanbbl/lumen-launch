@@ -8,62 +8,55 @@ on:
 
 jobs:
   anchor-tests:
-    name: Run Anchor Tests
+    name: Anchor Tests + Frontend Build
     runs-on: ubuntu-latest
+    container:
+      image: solanalabs/solana:stable
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # تثبيت Rust
+      # Setup Rust
       - name: Setup Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-
-      # تثبيت Solana CLI مع PATH صحيح
-      - name: Install Solana CLI
         run: |
-          sh -c "$(curl -sSfL https://release.anza.xyz/stable/install)"
-          echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
-          solana --version
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
+          source $HOME/.cargo/env
+          rustc --version
 
-      # تثبيت Anchor
-      - name: Install Anchor
-        run: |
-          cargo install --git https://github.com/coral-xyz/anchor avm --locked
-          anchor --version
-
-      # تشغيل اختبارات العقود
-      - name: Run Anchor Tests
-        run: anchor test
-
-  frontend-build:
-    name: Build Frontend
-    runs-on: ubuntu-latest
-    needs: anchor-tests
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
+      # Setup Node.js + Yarn
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      - name: Install frontend dependencies
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      # Install Anchor CLI via AVM
+      - name: Install Anchor CLI
+        run: |
+          cargo install --git https://github.com/coral-xyz/anchor avm --locked
+          anchor --version
+
+      # Run Anchor Tests
+      - name: Run Anchor Tests
+        run: anchor test
+
+      # Install frontend dependencies
+      - name: Install Frontend Dependencies
         run: npm install --prefix frontend
 
-      - name: Build frontend
+      # Build frontend
+      - name: Build Frontend
         run: npm run build --prefix frontend
 
   deploy:
     name: Optional Deployment
     runs-on: ubuntu-latest
-    needs: frontend-build
+    needs: anchor-tests
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      # هنا يمكن إضافة خطوات النشر على Vercel/Netlify أو أي backend
+      # إضافة خطوات النشر لاحقًا على Vercel / Netlify / Cloud
       - run: echo "Deployment step can be configured here"
