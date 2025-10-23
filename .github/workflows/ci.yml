@@ -8,33 +8,62 @@ on:
 
 jobs:
   anchor-tests:
+    name: Run Anchor Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # تثبيت Rust
       - name: Setup Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
+
+      # تثبيت Solana CLI مع PATH صحيح
       - name: Install Solana CLI
         run: |
-          sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
+          curl -sSfL https://release.solana.com/stable/install | sh
+          echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
           solana --version
+
+      # تثبيت Anchor
       - name: Install Anchor
         run: |
           cargo install --git https://github.com/coral-xyz/anchor avm --locked
           anchor --version
+
+      # تشغيل اختبارات العقود
       - name: Run Anchor Tests
         run: anchor test
 
   frontend-build:
+    name: Build Frontend
     runs-on: ubuntu-latest
     needs: anchor-tests
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
-      - run: npm install --prefix frontend
-      - run: npm run build --prefix frontend
+
+      - name: Install frontend dependencies
+        run: npm install --prefix frontend
+
+      - name: Build frontend
+        run: npm run build --prefix frontend
+
+  deploy:
+    name: Optional Deployment
+    runs-on: ubuntu-latest
+    needs: frontend-build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      # هنا يمكن إضافة خطوات النشر على Vercel/Netlify أو أي backend
+      - run: echo "Deployment step can be configured here"
