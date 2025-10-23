@@ -1,0 +1,15 @@
+{
+  "name": "Lumen Launch Codespace",
+  "image": "mcr.microsoft.com/devcontainers/rust:1-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:1": {}
+  },
+  "postCreateCommand": "cargo install --git https://github.com/coral-xyz/anchor avm --locked && npm install --prefix frontend",
+  "forwardPorts": [3000],
+  "customizations": {
+    "vscode": {
+      "extensions": ["rust-lang.rust", "esbenp.prettier-vscode", "ms-vscode.vscode-typescript-next"]
+    }
+  }
+}
