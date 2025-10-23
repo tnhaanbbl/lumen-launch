@@ -1,0 +1,35 @@
+{
+  "license": "ISC",
+  "scripts": {
+    "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
+    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
+    "test": "cross-env ANCHOR_PROVIDER_URL=https://api.devnet.solana.com mocha \"tests/**/*.test.js\" --timeout 120000",
+    "test:local": "mocha \"tests/**/*.test.js\" --timeout 120000"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
+    "@project-serum/anchor": "^0.26.0",
+    "@solana/spl-token": "^0.1.8",
+    "@solana/web3.js": "^1.98.4",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.2.0",
+    "chai": "^4.5.0",
+    "cross-env": "^10.1.0",
+    "jest": "^30.2.0",
+    "mocha": "^11.7.4",
+    "prettier": "^2.6.2",
+    "solana-bankrun": "^0.4.0"
+  },
+  "name": "lumen-launch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "commonjs"
+}

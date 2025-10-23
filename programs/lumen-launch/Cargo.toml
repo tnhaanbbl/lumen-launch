@@ -1,0 +1,28 @@
+[package]
+name = "lumen_launch"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/yourname/lumen_launch"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "lumen_launch"
+
+[dependencies]
+anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
+anchor-spl = { version = "0.31.1", features = ["token", "associated_token"] }
+
+[features]
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+# لإخفاء تحذيرات cfg
+no-entrypoint   = []
+cpi             = []
+custom-heap     = []
+custom-panic    = []
+no-idl          = []
+no-log-ix-name  = []
+anchor-debug    = []
+
+[dev-dependencies]
+anchor-client = { version = "0.31.1" }
